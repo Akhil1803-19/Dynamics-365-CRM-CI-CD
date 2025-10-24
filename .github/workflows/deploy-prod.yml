@@ -1,1 +1,24 @@
+name: Deploy to Production
+on:
+  push:
+    branches:
+      - main
 
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Power Platform CLI
+        run: |
+          iwr https://aka.ms/PowerAppsCLIInstall -OutFile pac.msi
+          msiexec /i pac.msi /quiet
+
+      - name: Authenticate to Production Environment
+        run: pac auth create --url https://<PROD_ENV_URL> --name PROD --username ${{ secrets.PROD_USERNAME }} --password ${{ secrets.PROD_PASSWORD }}
+
+      - name: Import Solution to Production
+        run: pac solution import --path solutions/Solution1.zip --async
+``
