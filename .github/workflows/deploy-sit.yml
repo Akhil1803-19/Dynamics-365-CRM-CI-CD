@@ -16,4 +16,9 @@ jobs:
           iwr https://aka.ms/PowerAppsCLIInstall -OutFile pac.msi
           msiexec /i pac.msi /quiet
 
-     
+      - name: Authenticate to SIT Environment
+        run: pac auth create --url https://<SIT_ENV_URL> --name SIT --username ${{ secrets.SIT_USERNAME }} --password ${{ secrets.SIT_PASSWORD }}
+
+      - name: Import Solution to SIT
+        run: pac solution import --path solutions/Solution1.zip --async
+``
