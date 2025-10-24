@@ -1,1 +1,23 @@
+name: Deploy to UAT
+on:
+  push:
+    branches:
+      - uat
 
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Power Platform CLI
+        run: |
+          iwr https://aka.ms/PowerAppsCLIInstall -OutFile pac.msi
+          msiexec /i pac.msi /quiet
+
+      - name: Authenticate to UAT Environment
+        run: pac auth create --url https://<UAT_ENV_URL> --name UAT --username ${{ secrets.UAT_USERNAME }} --password ${{ secrets.UAT_PASSWORD }}
+
+      - name: Import Solution to UAT
+        run: pac solution import --path solutions/Solution1.zip --async
